@@ -25,9 +25,11 @@ public class job1 {
         job.setReducerClass(reducer1.class);
 
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputValueClass(TextFloatPair.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(TextFloatPair.class);
 
-        job.addCacheFile(new Path("/data/movie-ratings/movies.dat").toUri());
+        //job.addCacheFile(new Path("/data/movie-ratings/movies.dat").toUri());
 
         Path outputPath = new Path(output);
         FileInputFormat.setInputPaths(job, StringUtils.join(input, ","));

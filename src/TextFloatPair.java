@@ -3,7 +3,7 @@ package coursework2;
 import java.io.*;
 import org.apache.hadoop.io.*;
 
-public class TextFloatPair implements WritableComparable<TextFloatPair> {
+public class TextFloatPair implements WritableComparable<TextFloatPair>  {
 
    private Text first;
    private FloatWritable second;
@@ -58,7 +58,7 @@ public class TextFloatPair implements WritableComparable<TextFloatPair> {
 
    @Override
    public String toString() {
-      return first.toString() + "\t" + second.toString();
+      return "( " + first.toString() + "\t" + second.toString() + ")";
    }
 
    @Override
