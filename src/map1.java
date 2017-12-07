@@ -1,6 +1,10 @@
 package coursework2;
 
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.Normalizer;
 import org.apache.hadoop.io.IntWritable;
@@ -8,26 +12,36 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.util.HashMap;
 
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+
 public class map1 extends Mapper<Object, Text, Text, IntWritable> {
 
+  private final IntWritable one = new IntWritable(1);
+  private Text data = new Text();
+  private HashMap<String, String> movies;
 
 
-	public void map(Object key, Text data, Context context) throws IOException, InterruptedException {
+  public void map(Object key, Text data, Context context) throws IOException, InterruptedException {
 
     String[] fields = data.toString().split("::");
 
     if (fields[0] == "userId")
       return;
 
-    private int userID = fields[0];
-    private int movieID = fields[1];
-    private float rating = fields[2];
+    String userID = fields[0];
+    String movieID = fields[1];
+    String rating = fields[2];
+
+    data.set(movieID);
+    context.write(data, one);
   }
 
   @Override
   protected void setup(Context context) throws IOException, InterruptedException, IndexOutOfBoundsException {
 
-    movies = new HashMap<Int, String>();
+    movies = new HashMap<String, String>();
 
     URI fileUri = context.getCacheFiles()[0];
 
@@ -43,7 +57,7 @@ public class map1 extends Mapper<Object, Text, Text, IntWritable> {
 
       while ((line = br.readLine()) != null) {
 
-        String[] fields = line.split("::s");
+        String[] fields = line.split("::");
 
         // 11 fields in the dataset, separated by a comma
         //field 2 is the medalist name, field 8 is the sport
