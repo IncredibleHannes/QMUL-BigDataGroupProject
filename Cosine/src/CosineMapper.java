@@ -1,6 +1,5 @@
 package coursework2;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +17,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-public class CosineMapper extends Mapper<Object, Text, Text, TextFloatPair> {
+public class CosineMapper extends Mapper<Object, Text, Text, RatingInfo> {
 
   private Text data = new Text();
   private ArrayList<String> movies;
@@ -26,23 +25,28 @@ public class CosineMapper extends Mapper<Object, Text, Text, TextFloatPair> {
   public void map(Object key, Text data, Context context) throws IOException, InterruptedException {
     String[] fields = data.toString().split("\t");
 
-    String user = fields[0];
-    Float average = Float.parseFloat(fields[1]);
-    String[] ratings = fields[2].split("\\|");
+    String userId = fields[0];
+    String[] ratings = fields[1].split("\\|");
 
     HashMap<String, Float> finalRatings = new HashMap<String, Float>();
 
+    float sum = 0;
+    int count = 0;
     for (int i = 0; i < ratings.length; i++) {
       String[] movieRatingPair = ratings[i].split(",");
       finalRatings.put(movieRatingPair[0], Float.parseFloat(movieRatingPair[1]));
+      sum += Float.parseFloat(movieRatingPair[1]);
+      count++;
     }
+
+    float average = sum / count;
 
     for (int i = 0; i < movies.size(); i++) {
       for (int j = 0; j < movies.size(); j++) {
         if (finalRatings.containsKey(movies.get(i)) && finalRatings.containsKey(movies.get(j))) {
           float movie1 = finalRatings.get(movies.get(i));
           float movie2 = finalRatings.get(movies.get(j));
-          
+
           int compare = movies.get(i).compareTo(movies.get(j));
           String moviesPair = "";
           if (compare <= 0) {
@@ -51,7 +55,7 @@ public class CosineMapper extends Mapper<Object, Text, Text, TextFloatPair> {
             moviesPair = movies.get(j) + "|" + movies.get(i);
           }
           Float num = movie1 - average;
-          context.write(new Text(moviesPair), new TextFloatPair(movies.get(i) + '|' + user, num));
+          context.write(new Text(moviesPair), new RatingInfo(movies.get(i), userId, num));
 
         }
       }
@@ -74,7 +78,11 @@ public class CosineMapper extends Mapper<Object, Text, Text, TextFloatPair> {
     try {
 
       while ((line = br.readLine()) != null) {
-          movies.add(line);
+          String[] fields = line.split("::");
+          if (fields.length == 3) {
+            movies.add(fields[0]);
+            //movies.add(line);
+          }
       }
 
       br.close();

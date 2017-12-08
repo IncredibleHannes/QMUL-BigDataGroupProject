@@ -14,8 +14,6 @@ import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
-//enum CustomCounters {NUM_ATHLETES}
-
 public class CosineJob {
     public static void runJob(String[] input, String output) throws Exception {
         Job job = Job.getInstance(new Configuration());
@@ -26,9 +24,9 @@ public class CosineJob {
         job.setReducerClass(CosineReducer.class);
 
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(TextFloatPair.class);
+        job.setOutputValueClass(RatingInfo.class);
 
-        job.addCacheFile(new Path("testInput/testMovies").toUri());
+        job.addCacheFile(new Path("/data/movie-ratings/movies.dat").toUri());
 
         Path outputPath = new Path(output);
         FileInputFormat.setInputPaths(job, StringUtils.join(input, ","));
