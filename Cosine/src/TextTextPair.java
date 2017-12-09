@@ -3,30 +3,30 @@ package coursework2;
 import java.io.*;
 import org.apache.hadoop.io.*;
 
-public class TextFloatPair implements WritableComparable<TextFloatPair> {
+public class TextTextPair implements WritableComparable<TextTextPair> {
 
    private Text first;
-   private FloatWritable second;
+   private Text second;
 
-   public TextFloatPair() {
+   public TextTextPair() {
       this.first = new Text();
-      this.second = new FloatWritable();
+      this.second = new Text();
    }
 
-   public TextFloatPair(String first, float second) {
+   public TextTextPair(String first, String second) {
       set(first, second);
    }
 
-   public void set(String first, float second) {
+   public void set(String first, String second) {
       this.first = new Text(first);
-      this.second = new FloatWritable(second);
+      this.second = new Text(second);
    }
 
    public Text getFirst() {
       return first;
    }
 
-   public FloatWritable getSecond() {
+   public Text getSecond() {
       return second;
    }
 
@@ -44,14 +44,14 @@ public class TextFloatPair implements WritableComparable<TextFloatPair> {
 
    @Override
    public int hashCode() {
-      return first.hashCode() * 163 + second.hashCode();
+      return first.hashCode() * 150 + second.hashCode();
    }
 
    @Override
    public boolean equals(Object o) {
-      if (o instanceof TextFloatPair) {
-         TextFloatPair tp = (TextFloatPair) o;
-         return second.equals(tp.second);
+      if (o instanceof TextTextPair) {
+         TextTextPair tp = (TextTextPair) o;
+         return first.equals(tp.first) && second.equals(tp.second);
       }
       return false;
    }
@@ -62,7 +62,7 @@ public class TextFloatPair implements WritableComparable<TextFloatPair> {
    }
 
    @Override
-   public int compareTo(TextFloatPair tp) {
+   public int compareTo(TextTextPair tp) {
       int cmp = first.compareTo(tp.first);
       if (cmp != 0) {
          return cmp;

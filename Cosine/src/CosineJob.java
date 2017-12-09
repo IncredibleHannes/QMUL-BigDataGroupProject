@@ -23,10 +23,8 @@ public class CosineJob {
         job.setMapperClass(CosineMapper.class);
         job.setReducerClass(CosineReducer.class);
 
-        job.setOutputKeyClass(Text.class);
+        job.setOutputKeyClass(TextTextPair.class);
         job.setOutputValueClass(RatingInfo.class);
-
-        job.addCacheFile(new Path("/data/movie-ratings/movies.dat").toUri());
 
         Path outputPath = new Path(output);
         FileInputFormat.setInputPaths(job, StringUtils.join(input, ","));

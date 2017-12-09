@@ -5,76 +5,76 @@ import org.apache.hadoop.io.*;
 
 public class RatingInfo implements Writable {
 
-   private Text movieId;
-   private Text userId;
-   private FloatWritable rating;
+   private FloatWritable rating1;
+   private FloatWritable rating2;
+   private FloatWritable average;
 
    public RatingInfo() {
-      this.movieId = new Text();
-      this.userId = new Text();
-      this.rating = new FloatWritable();
+      this.rating1 = new FloatWritable();
+      this.rating2 = new FloatWritable();
+      this.average = new FloatWritable();
    }
 
-   public RatingInfo(String movieId, String userId, float rating) {
-      set(movieId, userId, rating);
+   public RatingInfo(float rating1, float rating2, float average) {
+      set(rating1, rating2, average);
    }
 
-   public void set(String movieId, String userId, float rating) {
-      this.movieId = new Text(movieId);
-      this.userId = new Text(userId);
-      this.rating = new FloatWritable(rating);
+   public void set(float rating1, float rating2, float average) {
+      this.rating1 = new FloatWritable(rating1);
+      this.rating2 = new FloatWritable(rating2);
+      this.average = new FloatWritable(average);
    }
 
-   public Text getMovieId() {
-      return movieId;
+   public FloatWritable getRating1() {
+      return rating1;
    }
 
-   public Text getUserId() {
-      return userId;
+   public FloatWritable getRating2() {
+      return rating2;
    }
 
-   public FloatWritable getRating() {
-      return rating;
+   public FloatWritable getAverage() {
+      return average;
    }
 
    public void write(DataOutput out) throws IOException {
-      movieId.write(out);
-      userId.write(out);
-      rating.write(out);
+      rating1.write(out);
+      rating2.write(out);
+      average.write(out);
    }
 
    public void readFields(DataInput in) throws IOException {
-      movieId.readFields(in);
-      userId.readFields(in);
-      rating.readFields(in);
+      rating1.readFields(in);
+      rating2.readFields(in);
+      average.readFields(in);
    }
 
    @Override
    public int hashCode() {
-      return movieId.hashCode() * 163 + userId.hashCode() * 30 + rating.hashCode();
+      return rating1.hashCode() * 163 + rating2.hashCode() * 30 + average.hashCode();
    }
 
    public boolean equals(Object o) {
       if (o instanceof RatingInfo) {
          RatingInfo ratingInfo = (RatingInfo) o;
-         return rating.equals(ratingInfo.rating) && movieId.equals(ratingInfo.movieId) && userId.equals(ratingInfo.userId);
+         return rating1.equals(ratingInfo.rating1) && rating2.equals(ratingInfo.rating2) && average.equals(ratingInfo.average);
       }
       return false;
    }
 
    public String toString() {
-      return movieId.toString() + "\t" + userId.toString() + "\t" + rating.toString();
+      return rating1.toString() + "\t" + rating2.toString() + "\t" + average.toString();
    }
 
    public int compareTo(RatingInfo ratingInfo) {
-      int cmp = movieId.compareTo(ratingInfo.movieId);
+      int cmp = rating1.compareTo(ratingInfo.rating1);
       if (cmp != 0) {
          return cmp;
       }
-      cmp = userId.compareTo(ratingInfo.userId);
+      cmp = rating2.compareTo(ratingInfo.rating2);
       if (cmp != 0) {
          return cmp;
       }
-      return rating.compareTo(ratingInfo.rating);
+      return average.compareTo(ratingInfo.average);
    }
 }
