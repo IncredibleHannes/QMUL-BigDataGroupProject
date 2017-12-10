@@ -10,20 +10,23 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class CosineReducer extends Reducer<TextTextPair, RatingInfo, TextTextPair, DoubleWritable> {
+public class CosineReducer extends Reducer<Text, Text, Text, DoubleWritable> {
 
-    public void reduce(TextTextPair key, Iterable<RatingInfo> values, Context context)
+    public void reduce(Text key, Iterable<Text> values, Context context)
         throws IOException, InterruptedException {
         float num = 0;
         float dem1 = 0;
         float dem2 = 0;
         double similarity = 0;
+        String [] ratings = null;
+        String [] ks = key.toString().split(",");
 
-        if (!key.getFirst().equals(key.getSecond())) {
-          for (RatingInfo value : values) {
-              float rating1 = value.getRating1().get();
-              float rating2 = value.getRating2().get();
-              float average = value.getAverage().get();
+        if (!ks[0].equals(ks[1])) {
+          for (Text value : values) {
+              ratings = value.toString().split(",");
+              float rating1 = Float.parseFloat(ratings[0]);
+              float rating2 = Float.parseFloat(ratings[1]);
+              float average = Float.parseFloat(ratings[2]);
               num += (rating1 - average)*(rating2 - average);
               dem1 += Math.pow(rating1 - average, 2);
               dem2 += Math.pow(rating2 - average, 2);

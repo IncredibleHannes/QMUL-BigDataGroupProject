@@ -23,8 +23,8 @@ public class CosineJob {
         job.setMapperClass(CosineMapper.class);
         job.setReducerClass(CosineReducer.class);
 
-        job.setOutputKeyClass(TextTextPair.class);
-        job.setOutputValueClass(RatingInfo.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
 
         Path outputPath = new Path(output);
         FileInputFormat.setInputPaths(job, StringUtils.join(input, ","));

@@ -17,9 +17,8 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-public class CosineMapper extends Mapper<Object, Text, TextTextPair, RatingInfo> {
+public class CosineMapper extends Mapper<Object, Text, Text, Text> {
 
-  private Text data = new Text();
 
   public void map(Object key, Text data, Context context) throws IOException, InterruptedException {
     String[] fields = data.toString().split("\t");
@@ -45,9 +44,7 @@ public class CosineMapper extends Mapper<Object, Text, TextTextPair, RatingInfo>
     int moviesSize = movies.size();
     for (int i = 0; i < moviesSize; i++) {
       for (int j = i; j < moviesSize; j++) {
-        String movie1 = movies.get(i);
-        String movie2 = movies.get(j);
-        context.write(new TextTextPair(movie1, movie2), new RatingInfo(ratings.get(i), ratings.get(j), average));
+        context.write(new Text(movies.get(i)+","+ movies.get(j)), new Text(ratings.get(i)+","+ratings.get(j)+","+ average));
       }
     }
   }
