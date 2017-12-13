@@ -26,14 +26,14 @@ public class CosineMapper extends Mapper<Object, Text, Text, Text> {
     String userId = fields[0];
     String[] pairs = fields[1].split("\\|");
 
-    ArrayList<String> movies = new ArrayList<String>();
+    ArrayList<Integer> movies = new ArrayList<String>();
     ArrayList<Float> ratings = new ArrayList<Float>();
 
     float sum = 0;
     int count = 0;
     for (int i = 0; i < pairs.length; i++) {
       String[] movieRatingPair = pairs[i].split(",");
-      movies.add(movieRatingPair[0]);
+      movies.add(Integer.parseInt(movieRatingPair[0]));
       ratings.add(Float.parseFloat(movieRatingPair[1]));
       sum += Float.parseFloat(movieRatingPair[1]);
       count++;
@@ -44,7 +44,11 @@ public class CosineMapper extends Mapper<Object, Text, Text, Text> {
     int moviesSize = movies.size();
     for (int i = 0; i < moviesSize; i++) {
       for (int j = i; j < moviesSize; j++) {
-        context.write(new Text(movies.get(i)+","+ movies.get(j)), new Text(ratings.get(i)+","+ratings.get(j)+","+ average));
+        if (movie.get(i) > movies.get(j)) {
+          context.write(new Text(movies.get(i)+","+ movies.get(j)), new Text(ratings.get(i)+","+ratings.get(j)+","+ average));
+        } else {
+          context.write(new Text(movies.get(j)+","+ movies.get(i)), new Text(ratings.get(j)+","+ratings.get(i)+","+ average));
+        }
       }
     }
   }
