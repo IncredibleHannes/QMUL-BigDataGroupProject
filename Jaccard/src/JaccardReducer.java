@@ -28,19 +28,17 @@ public class JaccardReducer extends Reducer<Text, Text, Text, DoubleWritable> {
         //Compare ratings of both movies and count how many times they have recieved the same rating and how many times they 
         //have recieved different ratings
         double sameRatings = 0.0;
-        double diffRatings = 0.0;
+        double totalRatings = movie1.size() + movie2.size();
 
-        for (int i = 0; i < movie1.size(); i++){
-          for (int j = i; j < movie2.size(); j++){
-            if (movie1.get(i).equals(movie2.get(j)))
-              sameRatings += 1.0;
-            else
-              diffRatings += 1.0;
+        for (float f : movie1){
+          if(movie2.contains(f)){
+            sameRatings += 1.0;
+            movie2.remove(f);
           }
+        }
 
-        double jaccard = sameRatings/diffRatings;
+        double jaccard = sameRatings/totalRatings;
 
         context.write(key, new DoubleWritable(jaccard));
-        }
     }
 }
