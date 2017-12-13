@@ -44,7 +44,7 @@ public class CosineMapper extends Mapper<Object, Text, Text, Text> {
     int moviesSize = movies.size();
     for (int i = 0; i < moviesSize; i++) {
       for (int j = i; j < moviesSize; j++) {
-        if (movie.get(i) > movies.get(j)) {
+        if (movies.get(i) > movies.get(j)) {
           context.write(new Text(movies.get(i)+","+ movies.get(j)), new Text(ratings.get(i)+","+ratings.get(j)+","+ average));
         } else {
           context.write(new Text(movies.get(j)+","+ movies.get(i)), new Text(ratings.get(j)+","+ratings.get(i)+","+ average));
