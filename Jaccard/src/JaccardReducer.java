@@ -32,7 +32,7 @@ public class JaccardReducer extends Reducer<Text, Text, Text, DoubleWritable> {
 
         for (int i = 0; i < movie1.size(); i++){
           for (int j = i; j < movie2.size(); j++){
-            if (movie1.get(i) == movie2.get(j))
+            if (movie1.get(i).equals(movie2.get(j)))
               sameRatings++;
             else
               diffRatings++;
