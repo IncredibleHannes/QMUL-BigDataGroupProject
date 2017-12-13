@@ -25,17 +25,24 @@ public class JaccardReducer extends Reducer<Text, Text, Text, DoubleWritable> {
           movie2.add(Float.parseFloat(ratings[1]));
         }
         
-        //Compare ratings of both movies and count how many times they have recieved the same rating and how many times they 
-        //have recieved different ratings
-        double sameRatings = 0.0;
-        double totalRatings = movie1.size() + movie2.size();
+        //Compare ratings of both movies and count how many times the same rating appears in both sets (intersection)
+        // ArrayList<Float> intersection = new ArrayList<Float>(movie1);
+        // intersection.retainAll(movie2);
+        // double sameRatings = intersection.size();
 
-        for (float f : movie1){
-          if(movie2.contains(f)){
-            sameRatings += 1.0;
-            movie2.remove(f);
+        ArrayList<Float> intersection = new ArrayList<Float>();
+        ArrayList<Float> tempMovie2 = new ArrayList<Float>(movie2);
+
+        for (Float f : movie1){
+          if (tempMovie2.contains(f)){
+            intersection.add(f);
+            tempMovie2.remove(f);
           }
         }
+
+        double sameRatings = intersection.size();
+        double totalRatings = movie1.size() + movie2.size();
+
 
         double jaccard = sameRatings/totalRatings;
 
