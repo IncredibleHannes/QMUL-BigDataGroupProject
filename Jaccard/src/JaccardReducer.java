@@ -27,15 +27,15 @@ public class JaccardReducer extends Reducer<Text, Text, Text, DoubleWritable> {
         
         //Compare ratings of both movies and count how many times they have recieved the same rating and how many times they 
         //have recieved different ratings
-        int sameRatings = 0;
-        int diffRatings = 0;
+        double sameRatings = 0.0;
+        double diffRatings = 0.0;
 
         for (int i = 0; i < movie1.size(); i++){
           for (int j = i; j < movie2.size(); j++){
             if (movie1.get(i).equals(movie2.get(j)))
-              sameRatings++;
+              sameRatings += 1.0;
             else
-              diffRatings++;
+              diffRatings += 1.0;
           }
 
         double jaccard = sameRatings/diffRatings;
