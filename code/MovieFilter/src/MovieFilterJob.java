@@ -24,7 +24,7 @@ public class MovieFilterJob {
         job.setReducerClass(MovieFilterReducer.class);
 
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(DoubleWritable.class);
+        job.setOutputValueClass(Text.class);
 
         job.addCacheFile(new Path("/data/movie-ratings/movies.dat").toUri());
         job.addCacheFile(new Path("out/part-r-00000").toUri());

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import javafx.util.Pair;
-import java.util.Collections.*;
+import java.util.Collections;
 import java.util.Comparator;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.DoubleWritable;
@@ -25,16 +25,10 @@ public class MovieFilterReducer extends Reducer<Text, Text, Text, DoubleWritable
           movieSimilarity.add(new Pair(movie1, similarity));
         }
 
-        movieSimilarity.sort(new Comparator<Pair<String, Float>>() {
+        Collections.sort(movieSimilarity, new Comparator<Pair<String, Float>>() {
            @Override
            public int compare(Pair<String, Float> o1, Pair<String, Float> o2) {
-               if (o1.getValue() > o2.getValue()) {
-                   return -1;
-               } else if (o1.getValue().equals(o2.getValue())) {
-                   return 0;
-               } else {
-                   return 1;
-               }
+               return Float.compare(o2.getValue(),o1.getValue());
            }
         });
         if (movieSimilarity.size() > 10) {
