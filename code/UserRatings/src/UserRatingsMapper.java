@@ -20,7 +20,6 @@ public class UserRatingsMapper extends Mapper<Object, Text, Text, TextFloatPair>
   private Text data = new Text();
 
   public void map(Object key, Text data, Context context) throws IOException, InterruptedException {
-
     //Use this line for the test set (.csv)
     //String[] fields = data.toString().split(",");
 

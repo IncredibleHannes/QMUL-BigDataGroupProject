@@ -21,16 +21,5 @@ public class UserRatingsReducer extends Reducer<Text, TextFloatPair, Text, Text>
         outRatings = outRatings.substring(0, outRatings.length() - 1);
 
         context.write(key, new Text(outRatings));
-
-        /*ArrayList<TextFloatPair> ratings = new ArrayList<TextFloatPair>();
-
-        for (TextFloatPair value : values) {
-            ratings.add(value);
-        }
-
-        ArrayWritable outRatings = new ArrayWritable(TextFloatPair.class, ratings.toArray(new TextFloatPair[ratings.size()]));
-
-        context.write(key, outRatings);*/
-
     }
 }
