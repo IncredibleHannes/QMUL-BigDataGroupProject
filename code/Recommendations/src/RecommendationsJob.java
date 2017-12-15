@@ -5,17 +5,13 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
 public class RecommendationsJob {
-    public static void runJob(String[] input, String output) throws Exception {
+    public static void runJob(String[] input, String output, String userRatingsFile) throws Exception {
         Job job = Job.getInstance(new Configuration());
         Configuration conf = job.getConfiguration();
 
@@ -27,10 +23,11 @@ public class RecommendationsJob {
         job.setOutputValueClass(Text.class);
 
         job.addCacheFile(new Path("/data/movie-ratings/movies.dat").toUri());
-        job.addCacheFile(new Path("out/part-r-00000").toUri());
-        //job.addCacheFile(new Path("out/part-r-00001").toUri());
+        job.addCacheFile(new Path(userRatingsFile).toUri()); // output file of UserRatings where target user is located: e.g. out/part-r-00000
+
+        // for testing purposes
         //job.addCacheFile(new Path("testInput/testMovies").toUri());
-        //job.addCacheFile(new Path("testInput/testData").toUri());
+        //job.addCacheFile(new Path(userRatingsFile/*"testInput/testData"*/).toUri());
 
         Path outputPath = new Path(output);
         FileInputFormat.setInputPaths(job, StringUtils.join(input, ","));
@@ -40,6 +37,6 @@ public class RecommendationsJob {
     }
 
     public static void main(String[] args) throws Exception {
-        runJob(Arrays.copyOfRange(args, 0, args.length - 1), args[args.length - 1]);
+        runJob(Arrays.copyOfRange(args, 0, args.length - 2), args[args.length - 2], args[args.length - 1]);
     }
 }
