@@ -2,10 +2,6 @@ package coursework2;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -19,9 +15,9 @@ public class CosineReducer extends Reducer<Text, Text, Text, DoubleWritable> {
         float dem2 = 0;
         double similarity = 0;
         String [] ratings = null;
-        String [] ks = key.toString().split(",");
+        String [] moviesIds = key.toString().split(",");
 
-        if (!ks[0].equals(ks[1])) {
+        if (!moviesIds[0].equals(moviesIds[1])) {
           for (Text value : values) {
               ratings = value.toString().split(",");
               float rating1 = Float.parseFloat(ratings[0]);

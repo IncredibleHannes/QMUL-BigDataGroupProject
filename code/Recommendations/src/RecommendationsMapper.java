@@ -19,10 +19,10 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 public class RecommendationsMapper extends Mapper<Object, Text, Text, Text> {
-
   ArrayList<Integer> movies;
 
-  String targetUser = "100";
+  // necessary variables for making predictions
+  String targetUser = "100"; // Id of user for which we are making predictions
   Hashtable<Integer, Double> userNormRatings;
   Hashtable<Integer, Double> userRatings;
   double userMaxRating;
@@ -38,15 +38,17 @@ public class RecommendationsMapper extends Mapper<Object, Text, Text, Text> {
     int movie2 = Integer.parseInt(moviesPair[1]);
 
     // loop for all movies
+    // find movies which user didn't rated before
     ArrayList<Integer> moviesToPredict = new ArrayList<Integer>();
     for (int i=0; i < movies.size(); i++) {
       if (userNormRatings.get(movies.get(i)) == null) { // user haven't watched movie
-        // make prediction
-        //String val = movies.get(key1);
+        // should make prediction for this movie
         moviesToPredict.add(movies.get(i));
       }
     }
 
+    // need to pass user's min and max rating to make denormalisation in reducer
+    // emit pairs: (movie to predict) -> (similarity between movieToPredict and movie rated by user)
     for (int i=0; i < moviesToPredict.size(); i++) {
       int movieToPredict = moviesToPredict.get(i);
       if (movieToPredict == movie1 && userNormRatings.get(movie2) != null) {
@@ -54,13 +56,6 @@ public class RecommendationsMapper extends Mapper<Object, Text, Text, Text> {
       } else if (movieToPredict == movie2 && userNormRatings.get(movie1) != null) {
         context.write(new Text(movieToPredict + "," + userMinRating + "," + userMaxRating), new Text(similarity + "," +userNormRatings.get(movie1)));
       }
-    }
-
-  Enumeration<Integer> enumKey = userNormRatings.keys();
-    while(enumKey.hasMoreElements()) {
-        int key1 = enumKey.nextElement();
-        double val = userNormRatings.get(key1);
-        System.out.print(key1 + " " + val + "\n\r");
     }
   }
 
@@ -70,41 +65,36 @@ public class RecommendationsMapper extends Mapper<Object, Text, Text, Text> {
     userRatings = new Hashtable<Integer, Double>();
     userNormRatings = new Hashtable<Integer, Double>();
 
-		// Movies file
+		// Cache moovies from Movies file
 		URI fileUri = context.getCacheFiles()[0];
-
 		FileSystem fs = FileSystem.get(context.getConfiguration());
 		FSDataInputStream in = fs.open(new Path(fileUri));
-
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
 		String line = null;
 		try {
 			while ((line = br.readLine()) != null) {
 				String[] fields = line.split("::");
-        //String[] fields = line.split("\t");
-				// Fields are: 0:Id 1:Movie Title
-					movies.add(Integer.parseInt(fields[0]));
+        movies.add(Integer.parseInt(fields[0])); // fields[0] - movieId
 			}
 			br.close();
 		} catch (IOException e1) {
 		}
 
-    // User Ratings
+    // Cache User Ratings from output file of UserRatingsJob
     fileUri = context.getCacheFiles()[1];
-
 		fs = FileSystem.get(context.getConfiguration());
 		in = fs.open(new Path(fileUri));
-
 		br = new BufferedReader(new InputStreamReader(in));
 
 		line = null;
+    // calculate user Min and Max ratings for making normalisation
     userMaxRating = (double)0.0;
     userMinRating = (double)Integer.MAX_VALUE;
 		try {
 			while ((line = br.readLine()) != null) {
+        // Fields are: 0:UserId 1:RatingPairs
 				String[] fields = line.split("\t");
-				// Fields are: 0:UserId 1:RatingPairs
 
         String userId = fields[0];
         if (userId.compareTo(targetUser) == 0) {
@@ -123,12 +113,11 @@ public class RecommendationsMapper extends Mapper<Object, Text, Text, Text> {
           }
         }
 			}
-
 			br.close();
 		} catch (IOException e1) {
 		}
 
-    // calculate userNormRatings
+    // calculate user normalised ratings
     Enumeration<Integer> enumKey = userRatings.keys();
     while(enumKey.hasMoreElements()) {
         int movieId = enumKey.nextElement();

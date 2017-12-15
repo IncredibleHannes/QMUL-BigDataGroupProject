@@ -6,11 +6,9 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.Normalizer;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -33,7 +31,6 @@ public class idToNameMapper extends Mapper<Object, Text, Text, DoubleWritable> {
 
   @Override
   protected void setup(Context context) throws IOException, InterruptedException {
-
         //Load movie ID and Name from the "movies.dat" stored in cache
         movieInfo = new HashMap<String, String>();
 
@@ -46,14 +43,12 @@ public class idToNameMapper extends Mapper<Object, Text, Text, DoubleWritable> {
 
         String line = null;
         try {
-            //discard the header row
-            br.readLine();
-
             while ((line = br.readLine()) != null) {
-                //context.getCounter(CustomCounters.NUM_COMPANIES).increment(1);
+              // Fields are: 0:movieId, 1:movieTitle, 2:movieGenres
                String[] fields = line.split("::");
-                if (fields.length == 3)
+                if (fields.length == 3) {
                     movieInfo.put(fields[0], fields[1]);
+                }
             }
             br.close();
         }
