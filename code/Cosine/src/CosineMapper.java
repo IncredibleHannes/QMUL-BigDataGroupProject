@@ -1,34 +1,24 @@
 package coursework2;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.text.ParseException;
-import java.text.Normalizer;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 
 public class CosineMapper extends Mapper<Object, Text, Text, Text> {
-
 
   public void map(Object key, Text data, Context context) throws IOException, InterruptedException {
     String[] fields = data.toString().split("\t");
 
     String userId = fields[0];
-    String[] pairs = fields[1].split("\\|");
+    String[] pairs = fields[1].split("\\|"); // pairs of movies and ratings which user made
 
+    // movies and corresponding ratings
     ArrayList<Integer> movies = new ArrayList<Integer>();
     ArrayList<Float> ratings = new ArrayList<Float>();
 
+    // create movies and ratings collections
+    // and calculate sum and count for adjusted Cosine similarity metric
     float sum = 0;
     int count = 0;
     for (int i = 0; i < pairs.length; i++) {
@@ -39,12 +29,15 @@ public class CosineMapper extends Mapper<Object, Text, Text, Text> {
       count++;
     }
 
+    // average rating of user (for adjusted Cosine similarity metric)
     float average = sum / count;
 
+    // emit pairs of movies and corresponding ratings
+    // (movie1, movie2) -> (rating1, rating2)
     int moviesSize = movies.size();
     for (int i = 0; i < moviesSize; i++) {
       for (int j = i; j < moviesSize; j++) {
-        if (movies.get(i) > movies.get(j)) {
+        if (movies.get(i) > movies.get(j)) { // to remove duplicate keys: (movie1, movie2) and (movie2, movie1) should be the same key
           context.write(new Text(movies.get(i)+","+ movies.get(j)), new Text(ratings.get(i)+","+ratings.get(j)+","+ average));
         } else {
           context.write(new Text(movies.get(j)+","+ movies.get(i)), new Text(ratings.get(j)+","+ratings.get(i)+","+ average));

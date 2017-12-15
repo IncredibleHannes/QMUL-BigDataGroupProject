@@ -2,9 +2,6 @@ package coursework2;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.ArrayList;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
