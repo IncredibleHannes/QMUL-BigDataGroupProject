@@ -17,16 +17,18 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-public class idToNameMapper extends Mapper<IntWritable, DoubleWritable, Text, DoubleWritable> {
+public class idToNameMapper extends Mapper<Object, Text, Text, DoubleWritable> {
 
   private HashMap<String,String> movieInfo;
-  
-  public void map(IntWritable key, DoubleWritable data, Context context) throws IOException, InterruptedException {
+
+  public void map(Object key, Text data, Context context) throws IOException, InterruptedException {
     //Lookup movieID in the cached database to get the movie name
-    String movieName = movieInfo.get(key.toString());
+    String[] fields = data.toString().split("\t");
+    if (fields.length != 0) {
+      String movieName = movieInfo.get(fields[0]);
 
-    context.write(new Text(movieName), data);
-
+      context.write(new Text(movieName), new DoubleWritable(Double.parseDouble(fields[1])));
+    }
   }
 
   @Override
@@ -54,7 +56,7 @@ public class idToNameMapper extends Mapper<IntWritable, DoubleWritable, Text, Do
                     movieInfo.put(fields[0], fields[1]);
             }
             br.close();
-        } 
+        }
 
         catch (IOException e1) {
         }
